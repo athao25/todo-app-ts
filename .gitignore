@@ -30,3 +30,6 @@ logs/
 
 # Docker
 .docker/
+
+# Jest
+coverage/
