@@ -1,23 +1,46 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
+  app-dev:
+    build:
+      context: .
+      target: development
     ports:
       - "3000:3000"
-    env_file:
-      - .env.local
     environment:
       - NODE_ENV=development
-      - MONGODB_URI=mongodb://mongodb:27017/todo-app
-    depends_on:
-      - mongodb
+    env_file:
+      - env/.env.local
     volumes:
       - .:/app
       - /app/node_modules
-      - /app/dist
-      - ./.env.local:/app/.env.local
-    command: sh -c "npm install && npm run dev"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/todos"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app-prod:
+    build:
+      context: .
+      target: production
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - env/.env.prod
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/todos"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mongodb:
     image: mongo:latest
@@ -25,6 +48,11 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
 volumes:
   mongodb_data: 
