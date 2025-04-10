@@ -57,7 +57,7 @@ todo-app/
    cd todo-app
    ```
 
-2. **Set up environment variables. Update the values in `.env.local` as needed.**
+2. **Set up environment variables. Update the values in `.env.local.example` and rename it to `.env.local`.**
 
 3. **Start the application**
    ```bash
