@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  app-dev:
+  dev-server:
     build:
       context: .
       target: development
@@ -23,7 +23,7 @@ services:
       timeout: 5s
       retries: 5
 
-  app-prod:
+  prod-server:
     build:
       context: .
       target: production
